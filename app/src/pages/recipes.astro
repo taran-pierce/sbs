@@ -1,0 +1,60 @@
+---
+import Layout from '../layouts/Layout.astro';
+import RecipeList from '../components/RecipeList.tsx';
+import Navigation from '../components/Navigation';
+
+import { contentfulClient } from "../lib/contentful";
+// import { documentToHtmlString } from "@contentful/rich-text-html-renderer";
+import type { EntryFieldTypes } from "contentful";
+
+interface Page {
+  contentTypeId: "page",
+  fields: {
+    pageTitle: EntryFieldTypes.Text,
+		metaData: EntryFieldTypes.Object,
+		robots: EntryFieldTypes.Object,
+		canonical: EntryFieldTypes.Text,
+		description: EntryFieldTypes.Text,
+		keywords: EntryFieldTypes.Symbol,
+  }
+}
+
+const entries = await contentfulClient.getEntries<Page>({
+  content_type: "page",
+});
+
+interface Recipe {
+  contentTypeId: "recipe",
+  fields: {
+    name: EntryFieldTypes.Text,
+		ingredients: EntryFieldTypes.Text,
+  }
+}
+
+const recipes = await contentfulClient.getEntries<Recipe>({
+  content_type: "recipe",
+});
+---
+<Navigation
+  includeLogin={true}
+/>
+<main>
+	<Layout title="Recipe Storage Bin - Recipes">
+		<h1>Recipes</h1>
+		<RecipeList 
+			recipes={recipes.items}
+		/>
+		{entries.items.map((item) => (
+			<section>
+				<h2>{item.fields.pageTitle}</h2>
+			</section>
+		))}
+	</Layout>
+</main>
+
+<style>
+html, body {
+	margin: 0;
+	padding: 0;
+}
+</style>

@@ -1,0 +1,13 @@
+.navigationWrapper {
+  border-bottom: 1px solid black; 
+}
+
+.container {
+  margin: 0 auto;
+}
+
+@media(min-width: 992px) {
+  .container {
+    width: 960px;
+  }
+}

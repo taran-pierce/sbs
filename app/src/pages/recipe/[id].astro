@@ -1,0 +1,33 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { app } from "../../firebase/server";
+import { getFirestore } from "firebase-admin/firestore";
+
+interface Recipe {
+  name: string;
+  description: string;
+  ingredients: string;
+}
+
+const { id } = Astro.params;
+
+if (!id) {
+  return Astro.redirect("/404");
+}
+
+const db = getFirestore(app);
+const recipesRef = db.collection("recipes");
+const recipesSnapshot = await recipesRef.doc(id).get();
+
+if (!recipesSnapshot.exists) {
+  return Astro.redirect("/404");
+}
+
+const recipe = recipesSnapshot.data() as Recipe;
+---
+
+<Layout title={recipe.name}>
+  <h1>{recipe.name}</h1>
+  <p>Description: {recipe.description}</p>
+  <p>Ingredients: {recipe.ingredients}</p>
+</Layout>

@@ -1,0 +1,15 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navigation from '../components/Navigation';
+---
+
+<Navigation 
+  includeLogin={true}
+/>
+<main>
+	<Layout title="Recipe Storage Bin">
+		<h1>Recipe Storage Bin</h1>
+		<p>Go find yourself some recipes!!</p>
+		<p>Check them out <a href="/recipes/">here</a></p>
+	</Layout>
+</main>

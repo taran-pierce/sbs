@@ -1,0 +1,98 @@
+---
+import { app } from "../firebase/server";
+import { getAuth } from "firebase-admin/auth";
+import { getFirestore } from "firebase-admin/firestore";
+import Layout from "../layouts/Layout.astro";
+import Navigation from "../components/Navigation";
+
+interface Friend {
+  id: string;
+  name: string;
+  age: number;
+  isBestFriend: boolean;
+}
+
+interface Recipe {
+  id: string;
+  name: string;
+  description: string;
+  ingredients: string;
+}
+
+// db for user
+const db = getFirestore(app);
+
+const friendsRef = db.collection("friends");
+const friendsSnapshot = await friendsRef.get();
+const friends = friendsSnapshot.docs.map((doc) => ({
+  id: doc.id,
+  ...doc.data(),
+})) as Friend[];
+
+const recipesRef = db.collection("recipes");
+const recipesSnapshot = await recipesRef.get();
+const recipes = recipesSnapshot.docs.map((doc) => ({
+  id: doc.id,
+  ...doc.data(),
+})) as Recipe[];
+
+// auth section
+const auth = getAuth(app);
+
+/* Check current session */
+if (!Astro.cookies.has("session")) {
+  return Astro.redirect("/signin");
+}
+const sessionCookie = Astro.cookies.get("session")?.value;
+const decodedCookie = sessionCookie && await auth.verifySessionCookie(sessionCookie);
+const user = decodedCookie && await auth.getUser(decodedCookie.uid);
+
+if (!user) {
+  return Astro.redirect("/signin");
+}
+---
+
+<Navigation 
+  includeLogin={false}
+/>
+<main>
+  <Layout title="dashboard">
+    <h1>Welcome {user.displayName}</h1>
+    <p>We are happy to see you here</p>
+    <form action="/api/auth/signout">
+      <button type="submit">Sign out</button>
+    </form>
+    <h2>Friends</h2>
+    <ul>
+      {friends.map((friend) => (
+        <li>
+          <a href={`/friend/${friend.id}`}>{friend.name}</a>
+          <span>({friend.age})</span>
+          <strong>{friend.isBestFriend ? "Bestie" : "Friend"}</strong>
+          <a href={`/edit/${friend.id}`}>Edit</a>
+        </li>
+      ))}
+      <li>
+        <p>
+          <a href="/add/">Add Friend</a>
+        </p>
+      </li>
+    </ul>
+    <h2>Recipes</h2>
+    <ul>
+      {recipes.map((recipe) => (
+        <li>
+          <a href={`/recipe/${recipe.id}`}>{recipe.name}</a>
+          <span>({recipe.description})</span>
+          <strong>{recipe.ingredients}</strong>
+          <a href={`/edit/recipe/${recipe.id}`}>Edit</a>
+        </li>
+      ))}
+      <li>
+        <p>
+          <a href="/add/recipe/">Add Recipe</a>
+        </p>
+      </li>
+    </ul>
+  </Layout>
+</main>

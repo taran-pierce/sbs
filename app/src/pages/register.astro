@@ -1,22 +1,47 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import Navigation from "../components/Navigation";
+import Form from "../components/Form.astro";
+
+const inputs = [
+  {
+    type: 'text',
+    for: 'name',
+    id: 'name',
+    name: 'name',
+    text: 'Name',
+  },
+  {
+    type: 'email',
+    for: 'email',
+    id: 'email',
+    name: 'email',
+    text: 'Email',
+  },
+  {
+    type: 'password',
+    for: 'password',
+    id: 'password',
+    name: 'password',
+    text: 'password',
+  }
+];
+const submitButton = {
+  text: 'Create',
+  type: 'submit',
+};
 ---
-<Navigation
-  includeLogin={false}
-/>
 <main>
   <Layout title="Register">
     <h1>Register</h1>
     <p>Already have an account? <a href="/signin">Sign in</a></p>
-    <form action="/api/auth/register" method="post">
+    <form method="POST" action="/api/auth/register/">
       <label for="name">Name</label>
-      <input type="text" name="name" id="name" />
-      <label for="email" for="email">Email</label>
-      <input type="email" name="email" id="email" />
+      <input type="text" id="name" name="name" />
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" />
       <label for="password">Password</label>
-      <input type="password" name="password" id="password" />
-      <button type="submit">Login</button>
+      <input type="password" id="password" name="password" />
+      <button type="submit">Submit</button>
     </form>
   </Layout>
 </main>

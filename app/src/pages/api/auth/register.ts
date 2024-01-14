@@ -1,8 +1,12 @@
 import type { APIRoute } from "astro";
 import { getAuth } from "firebase-admin/auth";
 import { app } from "../../../firebase/server";
+import { getFirestore } from "firebase-admin/firestore";
 
-export const POST: APIRoute = async ({ request, redirect }) => {
+export const POST: APIRoute = async ({
+  request,
+  redirect,
+}) => {
   const auth = getAuth(app);
 
   /* Get form data */
@@ -26,14 +30,29 @@ export const POST: APIRoute = async ({ request, redirect }) => {
       displayName: name,
     });
   } catch (error: any) {
-    console.log({
-      error,
-    });
     return new Response(
       "Something went wrong",
       { status: 400 }
     );
   }
+
+  try {
+    // get the store
+    const db = getFirestore(app);
+
+    // look for customers table
+    const customersRef = db.collection("customers");
+    await customersRef.add({
+      name,
+      email,
+      personalRecipes: [],
+    });
+  } catch (error: any) {
+    return new Response(
+      "Problem creating customer account",
+      { status: 500 }
+    );
+  }
   
-  return redirect("/signin");
+  return redirect("/signin?newUser=true");
 };

@@ -1,10 +1,26 @@
 ---
+import { app } from "../../firebase/server";
+import { getAuth } from "firebase-admin/auth";
+
 import Layout from "../../layouts/Layout.astro";
+
+// auth section
+const auth = getAuth(app);
+
+/* Check current session */
+if (!Astro.cookies.has("session")) {
+  return Astro.redirect("/signin");
+}
+
+const sessionCookie = Astro.cookies.get("session")?.value;
+const decodedCookie = sessionCookie && await auth.verifySessionCookie(sessionCookie);
+const user:any = decodedCookie && await auth.getUser(decodedCookie.uid);
 ---
 
 <Layout title="Add a new recipe">
   <h1>Add a new recipe</h1>
   <form method="post" action="/api/recipes">
+    <input type="hidden" name="email" id="email" value={user?.email} />
     <label for="name">Name</label>
     <input type="text" id="name" name="name" />
     <label for="description">Description</label>

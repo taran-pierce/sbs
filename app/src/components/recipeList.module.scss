@@ -1,3 +1,11 @@
-.container {
-  border: 1px solid red;
+.listWrapper {
+  background-image: url('/images/black-linen.png');
+  background-repeat: repeat;
+  background-position: top left;
+  background-color: var(--white-transparent-75);
+  border: 1px solid var(--black-medium);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 2rem;
 }

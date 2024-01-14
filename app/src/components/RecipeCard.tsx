@@ -11,13 +11,11 @@ function RecipeCard({
 }) {
   return (
     <>
-      <div className={Styles.wrapper}>
-        <h4>{title}</h4>
+      <div className={Styles.card}>
+        <h3>{title}</h3>
         <p>{description}</p>
         <ul>
-          {ingredients.map((ingredient) => (
-            <li key={ingredient}>{ingredient}</li>
-          ))}
+          <li>{ingredients}</li>
         </ul>
       </div>
     </>

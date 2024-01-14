@@ -1,0 +1,11 @@
+.alertWrapper {
+  background: teal;
+  border: 1px solid teal;
+  border-radius: 10px;
+  box-shadow: var(--black-transparent-50);
+  padding: 1rem;
+
+  p {
+    font-weight: bold;
+  }
+}

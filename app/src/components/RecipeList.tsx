@@ -7,10 +7,7 @@ interface Recipes {
 }
 
 interface Recipe {
-  fields: any,
-}
-
-interface Fields {
+  id: string,
   name: string,
   description: string,
   ingredients: Array<string>,
@@ -21,28 +18,23 @@ function RecipeList({
 }: Recipes) {
   return (
     <>
-      <div>
-        <h3>Here are some recipes.</h3>
-        <div className={Styles.container}>
-          {recipes.map((recipe: Recipe) => {
-            const fields: Fields = recipe.fields;
-
-            const {
-              name,
-              description,
-              ingredients
-            } = fields;
-            
-            return (
-              <RecipeCard
-                title={name}
-                description={description}
-                ingredients={ingredients}
-                key={name}
-              />
-            )
-          })}
-        </div>
+      <div className={Styles.listWrapper}>
+        {recipes.map((recipe: Recipe) => {
+          const {
+            name,
+            description,
+            ingredients
+          } = recipe;
+          
+          return (
+            <RecipeCard
+              title={name}
+              description={description}
+              ingredients={ingredients}
+              key={name}
+            />
+          )
+        })}
       </div>
     </>
   );

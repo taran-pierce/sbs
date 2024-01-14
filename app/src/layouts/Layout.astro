@@ -1,11 +1,29 @@
 ---
+import Navigation from "../components/Navigation";
+import { app } from "../firebase/server";
+import { getAuth } from "firebase-admin/auth";
+import { getFirestore } from "firebase-admin/firestore";
+import { ViewTransitions } from "astro:transitions";
+
+import Styles from './layout.module.scss';
+
 interface Props {
 	title: string;
 }
 
-import Styles from './layout.module.scss';
+// db for user
+const db = getFirestore(app);
 
-const { title } = Astro.props;
+// auth section
+const auth = getAuth(app);
+
+const sessionCookie = Astro.cookies.get("session")?.value;
+const decodedCookie = sessionCookie && await auth.verifySessionCookie(sessionCookie);
+const user = decodedCookie && await auth.getUser(decodedCookie.uid);
+
+const {
+	title,
+} = Astro.props;
 ---
 
 <!doctype html>
@@ -17,9 +35,14 @@ const { title } = Astro.props;
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
+		<ViewTransitions />
 	</head>
 	<body>
-		<div class={Styles.container}>
+		<Navigation 
+		  includeLogin={true}
+			userInfo={user}
+		/>
+		<div class="container">
 			<slot />
 		</div>
 	</body>
@@ -35,6 +58,17 @@ const { title } = Astro.props;
 			rgb(var(--accent-light)) 30%,
 			white 60%
 		);
+		--brick: #b56015;
+		--white-pale: #e4eaaa;
+		--black: #000;
+		--black-medium: #666;
+		--white: #fff;
+		--black-transparent-25: rgba(0, 0, 0, .25);
+		--black-transparent-50: rgba(0, 0, 0, .5);
+		--black-transparent-75: rgba(0, 0, 0, .75);
+		--white-transparent-75: rgba(255,255,255,.75);
+		--white-transparent-50: rgba(255,255,255,.5);
+		--white-transparent-25: rgba(255,255,255,.25);
 	}
 	html {
 		font-family: system-ui, sans-serif;
@@ -42,6 +76,12 @@ const { title } = Astro.props;
 	html, body {
 		margin: 0;
 		padding: 0;
+	}
+	body {
+		background-image: url('/images/brick-wall-dark.png');
+		background-position: top left;
+		background-repeat: repeat;
+		background-color: var(--brick);
 	}
 	code {
 		font-family:
@@ -53,5 +93,18 @@ const { title } = Astro.props;
 			Bitstream Vera Sans Mono,
 			Courier New,
 			monospace;
+	}
+	a {
+		color: var(--white-pale);
+	}
+	.container {
+		margin: 0 auto;
+		padding: 0 .5rem;
+	}
+
+	@media(min-width: 960px) {
+    .container {
+			width: 960px;
+		}
 	}
 </style>

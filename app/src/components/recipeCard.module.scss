@@ -1,5 +1,13 @@
-.wrapper {
-  border: 1px solid black;
+.card {
+  background-image: url('/images/dark-leather.png');
+  background-repeat: repeat;
+  background-position: top left;
+  background-color: var(--white);
+  border: 1px solid var(--black-medium);
+  border-radius: 10px;
+  box-shadow: 2px 2px 4px var(--black-transparent-50);
   display: inline-block;
+  flex-grow: 1;
   padding: 1rem;
+  width: 400px;
 }

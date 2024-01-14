@@ -1,0 +1,51 @@
+---
+interface Props {
+  action: string,
+  method: string,
+  inputs: any,
+  submitButton: SubmitButton,
+}
+
+interface Input {
+  for: string,
+  name: string,
+  id: string,
+  text: string,
+  type: any,
+}
+
+interface SubmitButton {
+  type: any,
+  text: string,
+}
+
+const {
+  action,
+  method,
+  inputs,
+  submitButton,
+} = Astro.props;
+---
+<form
+  action={action}
+  method={method}
+>
+  {inputs && inputs.map((input: Input) => (
+    <>
+      <label
+        for={input.for}
+      >{input.text}
+        <input
+          type={input.type}
+          name={input.name}
+          id={input.id}
+        />
+      </label>
+    </>
+  ))}
+  <button
+    type={submitButton.type}
+  >
+    {submitButton.text}
+  </button>
+</form>

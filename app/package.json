@@ -1,13 +1,21 @@
 {
-  "name": "app",
-  "type": "module",
-  "version": "0.0.1",
+  "name": "sbs",
+  "version": "0.0.2",
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro check && astro build",
     "preview": "astro preview",
     "astro": "astro"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/taran-pierce/sbs"
+  },
+  "main": "app/dist/server/entry.mjs",
+  "author": "Taran Pierce",
+  "engines": {
+    "node": ">=18.0.0"
   },
   "dependencies": {
     "@astrojs/check": "^0.4.1",

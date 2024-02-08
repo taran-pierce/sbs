@@ -30,16 +30,25 @@ const {
   action={action}
   method={method}
 >
+  <slot />
   {inputs && inputs.map((input: Input) => (
     <>
       <label
         for={input.for}
       >{input.text}
-        <input
-          type={input.type}
-          name={input.name}
-          id={input.id}
-        />
+        {(input.type === 'text' || input.type === 'email' || input.type === 'password') && (
+          <input
+            type={input.type}
+            name={input.name}
+            id={input.id}
+          />
+        )}
+        {input.type === 'textarea' && (
+          <textarea
+            name={input.name}
+            id={input.id}
+          />
+        )}
       </label>
     </>
   ))}
@@ -49,3 +58,17 @@ const {
     {submitButton.text}
   </button>
 </form>
+
+<style>
+  input, textarea, label {
+    display: block;
+  }
+
+  label + label {
+    margin-top: 1rem;
+  }
+
+  button {
+    margin-top: 1rem;
+  }
+</style>

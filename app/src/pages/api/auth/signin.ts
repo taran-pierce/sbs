@@ -13,7 +13,14 @@ export const GET: APIRoute = async ({
   /* Get token from request headers */
   const idToken = request.headers.get("Authorization")?.split("Bearer ")[1];
 
+  // TODO sometimes when I log in it does not find the token the first time
+  // something wrong on the Dashboard page?
   if (!idToken) {
+    console.log({
+      request,
+      cookies,
+      redirect,
+    });
     return new Response(
       "No token found",
       { status: 401 }

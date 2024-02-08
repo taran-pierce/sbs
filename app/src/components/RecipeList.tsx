@@ -4,17 +4,20 @@ import Styles from './RecipeList.module.scss';
 
 interface Recipes {
   recipes: any,
+  email: string,
 }
 
 interface Recipe {
   id: string,
   name: string,
   description: string,
-  ingredients: Array<string>,
+  ingredientsArray: Array<string>,
+  email: string,
 }
 
 function RecipeList({
   recipes,
+  email,
 }: Recipes) {
   return (
     <>
@@ -23,14 +26,17 @@ function RecipeList({
           const {
             name,
             description,
-            ingredients
+            ingredientsArray,
+            id,
           } = recipe;
           
           return (
             <RecipeCard
               title={name}
               description={description}
-              ingredients={ingredients}
+              ingredients={ingredientsArray}
+              email={email}
+              id={id}
               key={name}
             />
           )

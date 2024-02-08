@@ -1,7 +1,7 @@
 ---
 import { app } from "../firebase/server";
 import { getFirestore } from "firebase-admin/firestore";
-
+import { getAuth } from "firebase-admin/auth";
 import Layout from '../layouts/Layout.astro';
 import RecipeList from '../components/RecipeList.tsx';
 
@@ -33,14 +33,26 @@ const {
 } = fields;
 
 interface Recipe {
-  id: string;
-  name: string;
-  description: string;
-  ingredients: string;
+  id: string,
+  name: string,
+  description: string,
+  ingredients: string,
+	email: string,
+}
+
+interface RecipeList {
+	recipes: Array<string>,
+	email: string,
 }
 
 // db for user
 const db = getFirestore(app);
+
+const auth = getAuth(app);
+
+const sessionCookie = Astro.cookies.get("session")?.value;
+const decodedCookie = sessionCookie && await auth.verifySessionCookie(sessionCookie);
+const user:any = decodedCookie && await auth.getUser(decodedCookie.uid);
 
 // db for recipes
 const recipesRef = db.collection("recipes");
@@ -62,13 +74,14 @@ const recipes = recipesSnapshot.docs.map((doc: any) => ({
 		)}
 		<RecipeList 
 			recipes={recipes}
+			email={user.email}
 		/>
 	</Layout>
 </main>
 
 <style>
-html, body {
-	margin: 0;
-	padding: 0;
-}
+	html, body {
+		margin: 0;
+		padding: 0;
+	}
 </style>

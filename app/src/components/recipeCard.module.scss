@@ -1,13 +1,26 @@
 .card {
-  background-image: url('/images/dark-leather.png');
+  // background-image: url('/images/dark-leather.png');
   background-repeat: repeat;
   background-position: top left;
-  background-color: var(--white);
+  background-color: var(--white-transparent-75);
   border: 1px solid var(--black-medium);
   border-radius: 10px;
   box-shadow: 2px 2px 4px var(--black-transparent-50);
   display: inline-block;
   flex-grow: 1;
-  padding: 1rem;
+  overflow: hidden;
   width: 400px;
+
+  .titleWrapper {
+    background: teal;
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem;
+    margin: 0;
+  }
+}
+
+.textWrapper {
+  // background: #fff;
+  padding: 1rem;
 }

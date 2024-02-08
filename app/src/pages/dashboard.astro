@@ -4,25 +4,31 @@ import { getAuth } from "firebase-admin/auth";
 import { getFirestore } from "firebase-admin/firestore";
 import Layout from "../layouts/Layout.astro";
 import Alert from '../components/Alert.tsx';
+import RecipeList from "../components/RecipeList";
 
 interface Recipe {
   id: string;
   name: string;
   description: string;
-  ingredients: string;
+  ingredientsArray: Array<string>;
 }
 
 interface PersonalRecipe {
   email: string;
   name: string;
   description: string;
-  ingredients: string;
+  ingredientsArray: Array<string>;
 }
 
 interface Customer {
   email: string,
   name: string,
   personalRecipes: Array<string>,
+}
+
+interface UserInfo {
+  email: string,
+  displayName: string,
 }
 
 // db for user
@@ -43,7 +49,7 @@ const user = decodedCookie && await auth.getUser(decodedCookie.uid);
 const userInfo = user && {
   email: user.email,
   displayName: user.displayName,
-};
+} as UserInfo;
 
 if (!user) {
   return Astro.redirect("/signin");
@@ -97,18 +103,7 @@ const existingRecipe = Astro.url.searchParams.get('recipeExists')! || '';
     <h2>Personal Recipe Collection</h2>
     {displayPersonalRecipes && (
       <>
-        <p>Here they are!</p>
-        {personalRecipe.map((recipe) => (
-          <>
-            <h5>{recipe.name}</h5>
-            <p>{recipe.description}</p>
-            <ul>
-              <li>
-                {recipe.ingredients}
-              </li>
-            </ul>
-          </>
-        ))}
+        <RecipeList recipes={personalRecipe} email={userInfo && userInfo?.email || ''} />
       </>
     )}
     {!displayPersonalRecipes && (

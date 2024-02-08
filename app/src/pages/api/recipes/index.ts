@@ -15,6 +15,8 @@ export const POST: APIRoute = async ({ request, redirect }) => {
   const ingredients = formData.get("ingredients")?.toString();
   const email = formData.get("email")?.toString();
 
+  const ingredientsArray = ingredients && ingredients.split(',');
+
   if (!name || !description || !ingredients || !email) {
     return new Response("Missing required fields", {
       status: 400,
@@ -58,7 +60,7 @@ export const POST: APIRoute = async ({ request, redirect }) => {
     await recipesRef.add({
       name,
       description,
-      ingredients,
+      ingredientsArray,
     });
   } catch (error) {
     return new Response("Something went wrong adding to main recipe collection...", {
@@ -75,7 +77,7 @@ export const POST: APIRoute = async ({ request, redirect }) => {
     await personalRecipesRef.add({
       name,
       description,
-      ingredients,
+      ingredientsArray,
       email,
     });
   } catch (error) {

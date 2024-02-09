@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Working on deployment through Azure
 - Fix build issues
+- trigger build
 
 ## [0.0.1] - 2024-02-01
 ### Added

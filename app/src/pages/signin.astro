@@ -2,35 +2,70 @@
 import { app } from "../firebase/server";
 import { getAuth } from "firebase-admin/auth";
 import Layout from "../layouts/Layout.astro";
-import Navigation from "../components/Navigation";
+import Form from "../components/Form.astro";
 
 /* Check if the user is authenticated */
 const auth = getAuth(app);
+
+// if they make it here some how but are already signed in
+// just redirect them to the dashboard
 if (Astro.cookies.has("session")) {
   const sessionCookie = Astro.cookies.get("session")?.value;
   const decodedCookie = sessionCookie && await auth.verifySessionCookie(sessionCookie);
+
   if (decodedCookie) {
     return Astro.redirect("/dashboard");
   }
 }
+
+const newUser = Astro.url.searchParams.get('newUser')! || '';
+
+const inputs = [
+  {
+    type: 'email',
+    for: 'email',
+    id: 'email',
+    name: 'email',
+    text: 'Email',
+  },
+  {
+    type: 'password',
+    for: 'password',
+    id: 'password',
+    name: 'password',
+    text: 'password',
+  }
+];
+
+const submitButton = {
+  text: 'Login',
+  type: 'submit',
+};
 ---
-<Navigation
-  includeLogin={false}
-/>
 <main>
   <Layout title="Sign in">
     <h1>Sign in</h1>
-    <p>New here? <a href="/register">Create an account</a></p>
-    <form action="/api/auth/signin" method="post">
-      <label for="email" for="email">Email</label>
-      <input type="email" name="email" id="email" />
-      <label for="password">Password</label>
-      <input type="password" name="password" id="password" />
-      <button type="submit">Login</button>
-    </form>
+    {newUser && (
+      <>
+        <p>Thanks for signing up!</p>
+        <p>Now just sign in and you can get started.</p>
+      </>
+    )}
+    <div class="hasError">
+      <p>There was a problem with your password!</p>
+    </div>
+    <Form
+      action="/api/auth/signin/"
+      method="get"
+      inputs={inputs}
+      submitButton={submitButton}
+    />
+    <p>OR</p>
     <button id="google">Sign in with Google</button>
+    <p>New here? <a href="/register">Create an account</a></p>
   </Layout>
 </main>
+
 <script>
   import {
     getAuth,
@@ -46,6 +81,8 @@ if (Astro.cookies.has("session")) {
   auth.setPersistence(inMemoryPersistence);
 
   const form = document.querySelector("form") as HTMLFormElement;
+
+  // for when they are signing in
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const formData = new FormData(form);
@@ -55,25 +92,37 @@ if (Astro.cookies.has("session")) {
     if (!email || !password) {
       return;
     }
-    const userCredential = await signInWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
-    const idToken = await userCredential.user.getIdToken();
-    const response = await fetch("/api/auth/signin", {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${idToken}`,
-      },
-    });
 
-    if (response.redirected) {
-      window.location.assign(response.url);
+    try {
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const idToken = await userCredential.user.getIdToken();
+      console.log({
+        idToken,
+      });
+      const response = await fetch("/api/auth/signin", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${idToken}`,
+        },
+      });
+
+      if (response.redirected) {
+        window.location.assign(response.url);
+      }
+    } catch (error) {
+      const errorMessage:any = document.getElementsByClassName('hasError')[0];
+
+      errorMessage.style.display = 'inline-block';
     }
   });
 
+  // Google Sign In
   const googleSignin = document.querySelector("#google") as HTMLButtonElement;
+
   googleSignin.addEventListener("click", async () => {
     const provider = new GoogleAuthProvider();
     const userCredential = await signInWithPopup(auth, provider);
@@ -89,3 +138,14 @@ if (Astro.cookies.has("session")) {
     }
   });
 </script>
+
+<style>
+  .hasError {
+    background: red;
+    font-weight: bold;
+    padding: .5rem;
+    border-radius: 10px;
+    display: none;
+    margin-bottom: 1rem;
+  }
+</style>

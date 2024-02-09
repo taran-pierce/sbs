@@ -1,60 +1,87 @@
 ---
+import { app } from "../firebase/server";
+import { getFirestore } from "firebase-admin/firestore";
+import { getAuth } from "firebase-admin/auth";
 import Layout from '../layouts/Layout.astro';
 import RecipeList from '../components/RecipeList.tsx';
-import Navigation from '../components/Navigation';
 
 import { contentfulClient } from "../lib/contentful";
-// import { documentToHtmlString } from "@contentful/rich-text-html-renderer";
+import { documentToHtmlString } from "@contentful/rich-text-html-renderer";
 import type { EntryFieldTypes } from "contentful";
 
 interface Page {
   contentTypeId: "page",
   fields: {
-    pageTitle: EntryFieldTypes.Text,
-		metaData: EntryFieldTypes.Object,
-		robots: EntryFieldTypes.Object,
-		canonical: EntryFieldTypes.Text,
-		description: EntryFieldTypes.Text,
-		keywords: EntryFieldTypes.Symbol,
+    pathname: EntryFieldTypes.Text,
+		pageTitle: EntryFieldTypes.Text,
+		mainParagraph: EntryFieldTypes.Text,
+		fancyContent: EntryFieldTypes.RichText,
   }
 }
 
-const entries = await contentfulClient.getEntries<Page>({
+const pages = await contentfulClient.getEntries<Page>({
   content_type: "page",
 });
 
+const currentPage = pages.items.filter((page) => page.fields.pathname === 'recipes')[0];
+const { fields } = currentPage;
+const {
+	pathname,
+	pageTitle,
+	mainParagraph,
+	fancyContent,
+} = fields;
+
 interface Recipe {
-  contentTypeId: "recipe",
-  fields: {
-    name: EntryFieldTypes.Text,
-		ingredients: EntryFieldTypes.Text,
-  }
+  id: string,
+  name: string,
+  description: string,
+  ingredients: string,
+	email: string,
 }
 
-const recipes = await contentfulClient.getEntries<Recipe>({
-  content_type: "recipe",
-});
+interface RecipeList {
+	recipes: Array<string>,
+	email: string,
+}
+
+// db for user
+const db = getFirestore(app);
+
+const auth = getAuth(app);
+
+const sessionCookie = Astro.cookies.get("session")?.value;
+const decodedCookie = sessionCookie && await auth.verifySessionCookie(sessionCookie);
+const user:any = decodedCookie && await auth.getUser(decodedCookie.uid);
+
+// db for recipes
+const recipesRef = db.collection("recipes");
+const recipesSnapshot = await recipesRef.get();
+const recipes = recipesSnapshot.docs.map((doc: any) => ({
+  id: doc.id,
+  ...doc.data(),
+})) as Recipe[];
 ---
-<Navigation
-  includeLogin={true}
-/>
 <main>
 	<Layout title="Recipe Storage Bin - Recipes">
 		<h1>Recipes</h1>
+		<p>Here are the recipes we have stored in the database so far:</p>
+		{mainParagraph && (
+			<p>{mainParagraph}</p>
+		)}
+		{fancyContent && (
+			<article set:html={documentToHtmlString(fancyContent)}></article>
+		)}
 		<RecipeList 
-			recipes={recipes.items}
+			recipes={recipes}
+			email={user?.email || ''}
 		/>
-		{entries.items.map((item) => (
-			<section>
-				<h2>{item.fields.pageTitle}</h2>
-			</section>
-		))}
 	</Layout>
 </main>
 
 <style>
-html, body {
-	margin: 0;
-	padding: 0;
-}
+	html, body {
+		margin: 0;
+		padding: 0;
+	}
 </style>

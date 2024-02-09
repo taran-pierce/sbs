@@ -3,6 +3,25 @@ import Layout from "../../layouts/Layout.astro";
 import { app } from "../../firebase/server";
 import { getFirestore } from "firebase-admin/firestore";
 
+export async function getStaticPaths() {
+  const db = getFirestore(app);
+  const recipesRef = db.collection("recipes");
+
+  const allRecipesSnapshot = await recipesRef.get();
+
+  const pageData = allRecipesSnapshot.docs.map((doc) => {
+    const { id } = doc;
+
+    return {
+      params: {
+        id: id,
+      }
+    };
+  });
+  
+  return pageData;
+}
+
 interface Recipe {
   name: string;
   description: string;

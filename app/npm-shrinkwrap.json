@@ -1,17 +1,18 @@
 {
-  "name": "app",
-  "version": "0.0.1",
+  "name": "sbs",
+  "version": "0.0.2",
   "lockfileVersion": 3,
   "requires": true,
   "packages": {
     "": {
-      "name": "app",
-      "version": "0.0.1",
+      "name": "sbs",
+      "version": "0.0.2",
       "dependencies": {
         "@astrojs/check": "^0.4.1",
         "@astrojs/node": "^7.0.4",
         "@astrojs/react": "^3.0.9",
         "@contentful/rich-text-html-renderer": "^16.3.0",
+        "@nanostores/react": "^0.7.1",
         "@types/react": "^18.2.47",
         "@types/react-dom": "^18.2.18",
         "astro": "^4.1.1",
@@ -19,11 +20,15 @@
         "firebase": "^10.7.1",
         "firebase-admin": "^12.0.0",
         "firebase-tools": "^13.0.3",
+        "nanostores": "^0.9.5",
         "prop-types": "^15.8.1",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
         "sass": "^1.69.7",
         "typescript": "^5.3.3"
+      },
+      "engines": {
+        "node": ">=18.0.0"
       }
     },
     "node_modules/@ampproject/remapping": {
@@ -2395,6 +2400,24 @@
       },
       "engines": {
         "node": ">=v12.0.0"
+      }
+    },
+    "node_modules/@nanostores/react": {
+      "version": "0.7.1",
+      "resolved": "https://registry.npmjs.org/@nanostores/react/-/react-0.7.1.tgz",
+      "integrity": "sha512-EXQg9N4MdI4eJQz/AZLIx3hxQ6BuBmV4Q55bCd5YCSgEOAW7tGTsIZxpRXxvxLXzflNvHTBvfrDNY38TlSVBkQ==",
+      "funding": [
+        {
+          "type": "github",
+          "url": "https://github.com/sponsors/ai"
+        }
+      ],
+      "engines": {
+        "node": "^16.0.0 || ^18.0.0 || >=20.0.0"
+      },
+      "peerDependencies": {
+        "nanostores": "^0.9.0",
+        "react": ">=18.0.0"
       }
     },
     "node_modules/@nodelib/fs.scandir": {
@@ -9784,6 +9807,20 @@
         "node": "^10 || ^12 || ^13.7 || ^14 || >=15.0.1"
       }
     },
+    "node_modules/nanostores": {
+      "version": "0.9.5",
+      "resolved": "https://registry.npmjs.org/nanostores/-/nanostores-0.9.5.tgz",
+      "integrity": "sha512-Z+p+g8E7yzaWwOe5gEUB2Ox0rCEeXWYIZWmYvw/ajNYX8DlXdMvMDj8DWfM/subqPAcsf8l8Td4iAwO1DeIIRQ==",
+      "funding": [
+        {
+          "type": "github",
+          "url": "https://github.com/sponsors/ai"
+        }
+      ],
+      "engines": {
+        "node": "^16.0.0 || ^18.0.0 || >=20.0.0"
+      }
+    },
     "node_modules/needle": {
       "version": "2.9.1",
       "resolved": "https://registry.npmjs.org/needle/-/needle-2.9.1.tgz",
@@ -10647,9 +10684,9 @@
       }
     },
     "node_modules/postcss": {
-      "version": "8.4.33",
-      "resolved": "https://registry.npmjs.org/postcss/-/postcss-8.4.33.tgz",
-      "integrity": "sha512-Kkpbhhdjw2qQs2O2DGX+8m5OVqEcbB9HRBvuYM9pgrjEFUg30A9LmXNlTAUj4S9kgtGyrMbTzVjH7E+s5Re2yg==",
+      "version": "8.4.35",
+      "resolved": "https://registry.npmjs.org/postcss/-/postcss-8.4.35.tgz",
+      "integrity": "sha512-u5U8qYpBCpN13BsiEB0CbR1Hhh4Gc0zLFuedrHJKMctHCHAGrMdG0PRM/KErzAL3CU6/eckEtmHNB3x6e3c0vA==",
       "funding": [
         {
           "type": "opencollective",
@@ -13825,12 +13862,12 @@
       }
     },
     "node_modules/vite": {
-      "version": "5.0.11",
-      "resolved": "https://registry.npmjs.org/vite/-/vite-5.0.11.tgz",
-      "integrity": "sha512-XBMnDjZcNAw/G1gEiskiM1v6yzM4GE5aMGvhWTlHAYYhxb7S3/V1s3m2LDHa8Vh6yIWYYB0iJwsEaS523c4oYA==",
+      "version": "5.1.0",
+      "resolved": "https://registry.npmjs.org/vite/-/vite-5.1.0.tgz",
+      "integrity": "sha512-STmSFzhY4ljuhz14bg9LkMTk3d98IO6DIArnTY6MeBwiD1Za2StcQtz7fzOUnRCqrHSD5+OS2reg4HOz1eoLnw==",
       "dependencies": {
         "esbuild": "^0.19.3",
-        "postcss": "^8.4.32",
+        "postcss": "^8.4.35",
         "rollup": "^4.2.0"
       },
       "bin": {

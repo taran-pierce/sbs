@@ -19,3 +19,6 @@ Seems pretty slick and has lots of integrations already.
 
 ### Notes
 - Run locally with Node after a build: `npx node dist/server/entry.mjs`
+- Local settings for Firebase need to be set in every new terminal
+  - otherwise authentication will not work
+  - `export GOOGLE_APPLICATION_CREDENTIALS=~/path/to/creds.json`

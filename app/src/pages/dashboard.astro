@@ -3,38 +3,36 @@ import { app } from "../firebase/server";
 import { getAuth } from "firebase-admin/auth";
 import { getFirestore } from "firebase-admin/firestore";
 import Layout from "../layouts/Layout.astro";
-import Navigation from "../components/Navigation";
-
-interface Friend {
-  id: string;
-  name: string;
-  age: number;
-  isBestFriend: boolean;
-}
+import Alert from '../components/Alert.tsx';
+import RecipeList from "../components/RecipeList";
 
 interface Recipe {
   id: string;
   name: string;
   description: string;
-  ingredients: string;
+  ingredientsArray: Array<string>;
+}
+
+interface PersonalRecipe {
+  email: string;
+  name: string;
+  description: string;
+  ingredientsArray: Array<string>;
+}
+
+interface Customer {
+  email: string,
+  name: string,
+  personalRecipes: Array<string>,
+}
+
+interface UserInfo {
+  email: string,
+  displayName: string,
 }
 
 // db for user
 const db = getFirestore(app);
-
-const friendsRef = db.collection("friends");
-const friendsSnapshot = await friendsRef.get();
-const friends = friendsSnapshot.docs.map((doc) => ({
-  id: doc.id,
-  ...doc.data(),
-})) as Friend[];
-
-const recipesRef = db.collection("recipes");
-const recipesSnapshot = await recipesRef.get();
-const recipes = recipesSnapshot.docs.map((doc) => ({
-  id: doc.id,
-  ...doc.data(),
-})) as Recipe[];
 
 // auth section
 const auth = getAuth(app);
@@ -43,56 +41,78 @@ const auth = getAuth(app);
 if (!Astro.cookies.has("session")) {
   return Astro.redirect("/signin");
 }
+
 const sessionCookie = Astro.cookies.get("session")?.value;
 const decodedCookie = sessionCookie && await auth.verifySessionCookie(sessionCookie);
 const user = decodedCookie && await auth.getUser(decodedCookie.uid);
 
+const userInfo = user && {
+  email: user.email,
+  displayName: user.displayName,
+} as UserInfo;
+
 if (!user) {
   return Astro.redirect("/signin");
 }
----
 
-<Navigation 
-  includeLogin={false}
-/>
+// db for ALL recipes
+const recipesRef = db.collection("recipes");
+const recipesSnapshot = await recipesRef.get();
+const recipes = recipesSnapshot.docs.map((doc: any) => ({
+  id: doc.id,
+  ...doc.data(),
+})) as Recipe[];
+
+// db for Customer
+const customersRef = db.collection("customers");
+
+// get snapshopt of customer data that matches current user
+const customersSnapshot = await customersRef.where('email', '==', user.email).get();
+const customers = customersSnapshot.docs.map((doc: any) => ({
+  id: doc.id,
+  ...doc.data(),
+})) as Customer[];
+
+// db for Personal Recipes
+const personalRecipesRef = db.collection("personalRecipes");
+
+// get snapshopt of customer data that matches current user
+const personalRecipesSnapshot = await personalRecipesRef.where('email', '==', user.email).get();
+const personalRecipe = personalRecipesSnapshot.docs.map((doc: any) => ({
+  id: doc.id,
+  ...doc.data(),
+})) as PersonalRecipe[];
+
+const {
+  name,
+} = customers[0];
+
+const displayPersonalRecipes = personalRecipe && personalRecipe.length > 0;
+
+const existingRecipe = Astro.url.searchParams.get('recipeExists')! || '';
+---
 <main>
   <Layout title="dashboard">
-    <h1>Welcome {user.displayName}</h1>
-    <p>We are happy to see you here</p>
-    <form action="/api/auth/signout">
-      <button type="submit">Sign out</button>
-    </form>
-    <h2>Friends</h2>
-    <ul>
-      {friends.map((friend) => (
-        <li>
-          <a href={`/friend/${friend.id}`}>{friend.name}</a>
-          <span>({friend.age})</span>
-          <strong>{friend.isBestFriend ? "Bestie" : "Friend"}</strong>
-          <a href={`/edit/${friend.id}`}>Edit</a>
-        </li>
-      ))}
-      <li>
-        <p>
-          <a href="/add/">Add Friend</a>
-        </p>
-      </li>
-    </ul>
-    <h2>Recipes</h2>
-    <ul>
-      {recipes.map((recipe) => (
-        <li>
-          <a href={`/recipe/${recipe.id}`}>{recipe.name}</a>
-          <span>({recipe.description})</span>
-          <strong>{recipe.ingredients}</strong>
-          <a href={`/edit/recipe/${recipe.id}`}>Edit</a>
-        </li>
-      ))}
-      <li>
-        <p>
-          <a href="/add/recipe/">Add Recipe</a>
-        </p>
-      </li>
-    </ul>
+    <h1>Welcome {name}</h1>
+    <p>We are happy to see you here!</p>
+    <p>Below are the recipes you have added and ones that you can edit/delete.</p>
+    <p>Once you create them then they will be available for others to view on the main recipe page!!</p>
+    {existingRecipe && (
+      <Alert message="There is already a recipe by that name!" />
+    )}
+    <h2>Personal Recipe Collection</h2>
+    {displayPersonalRecipes && (
+      <>
+        <RecipeList recipes={personalRecipe} email={userInfo && userInfo?.email || ''} />
+      </>
+    )}
+    {!displayPersonalRecipes && (
+      <>
+        <p>You have not added any yet!</p>
+      </>
+    )}
+    <p>
+      <a href="/add/recipe/">Add new recipe</a>
+    </p>
   </Layout>
 </main>

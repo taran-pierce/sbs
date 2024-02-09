@@ -1,48 +1,46 @@
 import RecipeCard from './RecipeCard.tsx';
 
-import Styles from './RecipeList.module.scss';
+import Styles from './recipeList.module.scss';
 
 interface Recipes {
   recipes: any,
+  email: string,
 }
 
 interface Recipe {
-  fields: any,
-}
-
-interface Fields {
+  id: string,
   name: string,
   description: string,
-  ingredients: Array<string>,
+  ingredientsArray: Array<string>,
+  email: string,
 }
 
 function RecipeList({
   recipes,
+  email,
 }: Recipes) {
   return (
     <>
-      <div>
-        <h3>Here are some recipes.</h3>
-        <div className={Styles.container}>
-          {recipes.map((recipe: Recipe) => {
-            const fields: Fields = recipe.fields;
-
-            const {
-              name,
-              description,
-              ingredients
-            } = fields;
-            
-            return (
-              <RecipeCard
-                title={name}
-                description={description}
-                ingredients={ingredients}
-                key={name}
-              />
-            )
-          })}
-        </div>
+      <div className={Styles.listWrapper}>
+        {recipes.map((recipe: Recipe) => {
+          const {
+            name,
+            description,
+            ingredientsArray,
+            id,
+          } = recipe;
+          
+          return (
+            <RecipeCard
+              title={name}
+              description={description}
+              ingredients={ingredientsArray}
+              email={email}
+              id={id}
+              key={name}
+            />
+          )
+        })}
       </div>
     </>
   );

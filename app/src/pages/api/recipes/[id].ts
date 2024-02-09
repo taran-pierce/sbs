@@ -5,6 +5,25 @@ import { getFirestore } from "firebase-admin/firestore";
 const db = getFirestore(app);
 const recipesRef = db.collection("recipes");
 
+export async function getStaticPaths() {
+  const db = getFirestore(app);
+  const recipesRef = db.collection("recipes");
+
+  const allRecipesSnapshot = await recipesRef.get();
+
+  const pageData = allRecipesSnapshot.docs.map((doc) => {
+    const { id } = doc;
+
+    return {
+      params: {
+        id: id,
+      }
+    };
+  });
+  
+  return pageData;
+}
+
 export const POST: APIRoute = async ({ params, redirect, request }) => {
   const formData = await request.formData();
   const name = formData.get("name")?.toString();

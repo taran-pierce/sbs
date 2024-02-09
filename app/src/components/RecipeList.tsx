@@ -1,6 +1,6 @@
 import RecipeCard from './RecipeCard.tsx';
 
-import Styles from './RecipeList.module.scss';
+import Styles from './recipeList.module.scss';
 
 interface Recipes {
   recipes: any,

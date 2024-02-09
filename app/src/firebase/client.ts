@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 // import { getAnalytics } from "firebase/analytics";
-
+ 
 const firebaseConfig = {
   apiKey: "AIzaSyBSOZQz5Cc5OUlhp9IZ2vYD36g0JRdPzHs",
   authDomain: "recipe-storage-bin.firebaseapp.com",

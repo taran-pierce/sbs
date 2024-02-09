@@ -5,10 +5,12 @@ import node from "@astrojs/node";
 
 // https://astro.build/config
 export default defineConfig({
+  site: "https://sbs.taranpierce.com/",
   integrations: [react({
     experimentalReactChildren: true
   })],
-  output: "server",
+  // output: "server",
+  output: "hybrid",
   adapter: node({
     mode: "standalone"
   }),
@@ -19,4 +21,10 @@ export default defineConfig({
       ],
     },
   },
+  // vite: {
+  //   optimizeDeps: {
+  //     noDiscovery: true,
+  //     include: [""],
+  //   }
+  // }
 });

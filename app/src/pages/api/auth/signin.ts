@@ -16,11 +16,6 @@ export const GET: APIRoute = async ({
   // TODO sometimes when I log in it does not find the token the first time
   // something wrong on the Dashboard page?
   if (!idToken) {
-    console.log({
-      request,
-      cookies,
-      redirect,
-    });
     return new Response(
       "No token found",
       { status: 401 }
@@ -29,8 +24,15 @@ export const GET: APIRoute = async ({
 
   /* Verify id token */
   try {
-    await auth.verifyIdToken(idToken);
+    const testing = await auth.verifyIdToken(idToken);
+
+    console.log({
+      testing,
+    });
   } catch (error) {
+    console.log({
+      error,
+    });
     return new Response(
       "Invalid token",
       { status: 401 }
